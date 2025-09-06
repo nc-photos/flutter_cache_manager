@@ -33,7 +33,7 @@ class CacheManager implements BaseCacheManager {
   CacheManager(Config config)
       : _config = config,
         _store = CacheStore(config) {
-    _webHelper = WebHelper(_store, config.fileService);
+    _webHelper = WebHelper(_store, config.fileService, config);
   }
 
   @visibleForTesting
@@ -43,7 +43,7 @@ class CacheManager implements BaseCacheManager {
     WebHelper? webHelper,
   })  : _config = config,
         _store = cacheStore ?? CacheStore(config) {
-    _webHelper = webHelper ?? WebHelper(_store, config.fileService);
+    _webHelper = webHelper ?? WebHelper(_store, config.fileService, config);
   }
 
   final Config _config;
@@ -218,6 +218,12 @@ class CacheManager implements BaseCacheManager {
 
     final file = await _config.fileSystem.createFile(cacheObject.relativePath);
     await file.writeAsBytes(fileBytes);
+    try {
+      _config.cacheFileTransformer?.call(url, key, file);
+    } catch (_) {
+      file.delete();
+      rethrow;
+    }
     _store.putFile(cacheObject);
     return file;
   }
@@ -260,6 +266,12 @@ class CacheManager implements BaseCacheManager {
         .map((event) => event)
         .pipe(sink);
 
+    try {
+      _config.cacheFileTransformer?.call(url, key, file);
+    } catch (_) {
+      file.delete();
+      rethrow;
+    }
     _store.putFile(cacheObject);
     return file;
   }

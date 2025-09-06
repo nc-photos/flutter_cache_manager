@@ -34,7 +34,7 @@ void main() {
             DateTime.now()));
       });
 
-      var webHelper = WebHelper(store, fileService);
+      var webHelper = WebHelper(store, fileService, config);
       var result = await webHelper
           .downloadFile(imageUrl)
           .firstWhere((r) => r is FileInfo, orElse: null);
@@ -54,7 +54,7 @@ void main() {
             Stream.value([]), 0, null, '', 404, DateTime.now()));
       });
 
-      var webHelper = WebHelper(store, fileService);
+      var webHelper = WebHelper(store, fileService, config);
 
       expect(
           () async => webHelper.downloadFile(imageUrl).toList(),
@@ -75,7 +75,7 @@ void main() {
             Stream.value([]), 0, 'testv1', '.jpg', 304, DateTime.now()));
       });
 
-      var webHelper = WebHelper(store, fileService);
+      var webHelper = WebHelper(store, fileService, config);
       var result = await webHelper
           .downloadFile(imageUrl)
           .firstWhere((r) => r is FileInfo, orElse: null);
@@ -102,7 +102,7 @@ void main() {
             DateTime.now()));
       });
 
-      var webHelper = WebHelper(store, fileService);
+      var webHelper = WebHelper(store, fileService, config);
 
       var call1 = webHelper.downloadFile(imageUrl).toList();
       var call2 = webHelper.downloadFile(imageUrl).toList();
@@ -130,7 +130,7 @@ void main() {
             DateTime.now()));
       });
 
-      var webHelper = WebHelper(store, fileService);
+      var webHelper = WebHelper(store, fileService, config);
       var call1 = webHelper.downloadFile(imageUrl).toList();
       var call2 =
           webHelper.downloadFile(imageUrl, ignoreMemCache: true).toList();
@@ -159,7 +159,7 @@ void main() {
       when(fileService.get(url3, headers: anyNamed('headers')))
           .thenAnswer((realInvocation) => completer3.future);
 
-      var webHelper = WebHelper(store, fileService);
+      var webHelper = WebHelper(store, fileService, config);
       webHelper.downloadFile(url1);
       webHelper.downloadFile(url2);
       webHelper.downloadFile(url3);
@@ -199,7 +199,7 @@ void main() {
             DateTime.now()));
       });
 
-      var webHelper = WebHelper(store, fileService);
+      var webHelper = WebHelper(store, fileService, config);
       var result = await webHelper
           .downloadFile(imageUrl)
           .firstWhere((r) => r is FileInfo, orElse: null);
@@ -217,7 +217,7 @@ void main() {
       config.returnsCacheObject(imageUrl, imageName, DateTime.now());
 
       final fileService = MockFileService();
-      var webHelper = WebHelper(store, fileService);
+      var webHelper = WebHelper(store, fileService, config);
 
       expect(await file.exists(), true);
       var _ = await webHelper

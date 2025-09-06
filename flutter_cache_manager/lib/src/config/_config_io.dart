@@ -13,6 +13,7 @@ class Config implements def.Config {
     CacheInfoRepository? repo,
     FileSystem? fileSystem,
     FileService? fileService,
+    this.cacheFileTransformer,
   })  : stalePeriod = stalePeriod ?? const Duration(days: 30),
         maxNrOfCacheObjects = maxNrOfCacheObjects ?? 200,
         repo = repo ?? _createRepo(cacheKey),
@@ -36,6 +37,9 @@ class Config implements def.Config {
 
   @override
   final FileService fileService;
+
+  @override
+  final def.CacheFileTransformer? cacheFileTransformer;
 
   static CacheInfoRepository _createRepo(String key) {
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {

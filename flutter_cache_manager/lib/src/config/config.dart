@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_cache_manager/src/config/_config_unsupported.dart'
     if (dart.library.html) '_config_web.dart'
     if (dart.library.io) '_config_io.dart' as impl;
 import 'package:flutter_cache_manager/src/storage/file_system/file_system.dart';
+
+typedef CacheFileTransformer = Future<void> Function(
+    String url, String key, File cacheFile)?;
 
 abstract class Config {
   /// Config file for the CacheManager.
@@ -28,6 +33,7 @@ abstract class Config {
     CacheInfoRepository repo,
     FileSystem fileSystem,
     FileService fileService,
+    CacheFileTransformer? cacheFileTransformer,
   }) = impl.Config;
 
   String get cacheKey;
@@ -41,4 +47,6 @@ abstract class Config {
   FileSystem get fileSystem;
 
   FileService get fileService;
+
+  CacheFileTransformer? get cacheFileTransformer;
 }

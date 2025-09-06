@@ -18,6 +18,8 @@ class Config implements def.Config {
     FileSystem? fileSystem,
     //ignore: avoid_unused_constructor_parameters
     FileService? fileService,
+    //ignore: avoid_unused_constructor_parameters
+    def.CacheFileTransformer? cacheFileTransformer,
   }) {
     throw UnsupportedError('Platform is not supported');
   }
@@ -39,4 +41,8 @@ class Config implements def.Config {
 
   @override
   FileService get fileService => throw UnimplementedError();
+
+  @override
+  def.CacheFileTransformer? get cacheFileTransformer =>
+      throw UnimplementedError();
 }

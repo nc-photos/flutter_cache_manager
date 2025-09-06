@@ -19,13 +19,14 @@ const statusCodesNewFile = [HttpStatus.ok, HttpStatus.accepted];
 const statusCodesFileNotChanged = [HttpStatus.notModified];
 
 class WebHelper {
-  WebHelper(this._store, FileService? fileFetcher)
+  WebHelper(this._store, FileService? fileFetcher, this.config)
       : _memCache = {},
         fileFetcher = fileFetcher ?? HttpFileService();
 
   final CacheStore _store;
   @visibleForTesting
   final FileService fileFetcher;
+  final Config config;
   final Map<String, BehaviorSubject<FileResponse>> _memCache;
   final Queue<QueueItem> _queue = Queue();
 
@@ -139,15 +140,21 @@ class WebHelper {
       newCacheObject = newCacheObject.copyWith(length: savedBytes);
     }
 
+    final file =
+        await _store.fileSystem.createFile(newCacheObject.relativePath);
+    try {
+      config.cacheFileTransformer
+          ?.call(newCacheObject.url, newCacheObject.key, file);
+    } catch (_) {
+      file.delete();
+      rethrow;
+    }
     _store.putFile(newCacheObject).then((_) {
       if (newCacheObject.relativePath != oldCacheObject.relativePath) {
         _removeOldFile(oldCacheObject.relativePath);
       }
     });
 
-    final file = await _store.fileSystem.createFile(
-      newCacheObject.relativePath,
-    );
     yield FileInfo(
       file,
       FileSource.Online,
