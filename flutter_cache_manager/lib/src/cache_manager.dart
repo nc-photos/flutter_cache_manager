@@ -219,7 +219,7 @@ class CacheManager implements BaseCacheManager {
     final file = await _config.fileSystem.createFile(cacheObject.relativePath);
     await file.writeAsBytes(fileBytes);
     try {
-      _config.cacheFileTransformer?.call(url, key, file);
+      await _config.cacheFileTransformer?.call(url, key, file);
     } catch (_) {
       file.delete();
       rethrow;
@@ -267,7 +267,7 @@ class CacheManager implements BaseCacheManager {
         .pipe(sink);
 
     try {
-      _config.cacheFileTransformer?.call(url, key, file);
+      await _config.cacheFileTransformer?.call(url, key, file);
     } catch (_) {
       file.delete();
       rethrow;

@@ -143,7 +143,7 @@ class WebHelper {
     final file =
         await _store.fileSystem.createFile(newCacheObject.relativePath);
     try {
-      config.cacheFileTransformer
+      await config.cacheFileTransformer
           ?.call(newCacheObject.url, newCacheObject.key, file);
     } catch (_) {
       file.delete();
