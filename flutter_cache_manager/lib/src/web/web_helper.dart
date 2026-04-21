@@ -130,7 +130,7 @@ class WebHelper {
 
     final oldCacheObject = cacheObject;
     var newCacheObject = _setDataFromHeaders(cacheObject, response);
-    if (statusCodesNewFile.contains(response.statusCode)) {
+    if (hasNewFile) {
       var savedBytes = 0;
       await for (final progress in _saveFile(newCacheObject, response)) {
         savedBytes = progress;
@@ -142,12 +142,14 @@ class WebHelper {
 
     final file =
         await _store.fileSystem.createFile(newCacheObject.relativePath);
-    try {
-      await config.cacheFileTransformer
-          ?.call(newCacheObject.url, newCacheObject.key, file);
-    } catch (_) {
-      file.delete();
-      rethrow;
+    if (hasNewFile) {
+      try {
+        await config.cacheFileTransformer
+            ?.call(newCacheObject.url, newCacheObject.key, file);
+      } catch (_) {
+        file.delete();
+        rethrow;
+      }
     }
     _store.putFile(newCacheObject).then((_) {
       if (newCacheObject.relativePath != oldCacheObject.relativePath) {
